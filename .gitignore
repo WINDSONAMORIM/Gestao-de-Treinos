@@ -3,3 +3,4 @@ Figma
 Instruçoes.txt
 README.md
 .env
+/src/generated/prisma
