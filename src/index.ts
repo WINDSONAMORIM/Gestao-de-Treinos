@@ -2,7 +2,7 @@ import "dotenv/config";
 import { z } from "zod/v4";
 import Fastify from "fastify";
 import {
-    jsonSchemaTransform,
+  jsonSchemaTransform,
   serializerCompiler,
   validatorCompiler,
   ZodTypeProvider,
@@ -11,6 +11,7 @@ import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUI from "@fastify/swagger-ui";
 import { auth } from "./lib/auth.js";
 import fastifyCors from "@fastify/cors";
+import fastifyApiReference from "@scalar/fastify-api-reference";
 
 const app = Fastify({
   logger: true,
@@ -27,16 +28,14 @@ await app.register(fastifySwagger, {
       description: "SAP - Sistema de Avaliação de Performance",
       version: "1.0.0",
     },
-    servers: [{
+    servers: [
+      {
         description: "localhost",
         url: "http://localhost:8080",
-    }],
+      },
+    ],
   },
   transform: jsonSchemaTransform,
-});
-
-app.register(fastifySwaggerUI, {
-  routePrefix: "/docs",
 });
 
 await app.register(fastifyCors, {
@@ -44,20 +43,32 @@ await app.register(fastifyCors, {
   credentials: true,
 });
 
+await app.register(fastifyApiReference, {
+  routePrefix: "/docs",
+  configuration: {
+    sources: [
+      {
+        title: "Gestão Treinos API",
+        slug: "gestao-treinos-api",
+        url: "/openapi.json",
+      },
+      {
+        title: "Our API Reference",
+        slug: "our-api-reference",
+        url: "/api/auth/open-api/generate-schema",
+      },
+    ],
+  },
+});
+
 app.withTypeProvider<ZodTypeProvider>().route({
   method: "GET",
-  url: "/",
+  url: "/swagger.json",
   schema: {
-    description: "Endpoint de teste",
-    tags: ["Test"],
-    response: {
-      200: z.object({
-        message: z.string(),
-      }),
-    },
-  },
-  handler: () => {
-    return { message: "Hello World!" };
+    hide: true,
+   },
+  handler: async () => {
+    return app.swagger();
   },
 });
 
