@@ -32,7 +32,7 @@ model WorkoutPlan {
   workoutDays WorkoutDay[]
   isActive    Boolean      @default(true)
   createdAt   DateTime     @default(now())
-  updateAt    DateTime     @updatedAt
+  updatedAt    DateTime     @updatedAt
 }
 
 enum WeekDay {
@@ -53,8 +53,9 @@ model WorkoutDay {
   isRest        Boolean           @default(false)
   weekDay       WeekDay
   exercises     WorkoutExercise[]
+  estimatedDurationInSeconds Int
   createdAt     DateTime          @default(now())
-  updateAt      DateTime          @updatedAt
+  updatedAt      DateTime          @updatedAt
 }
 
 model WorkoutExercise {
@@ -67,7 +68,7 @@ model WorkoutExercise {
   reps              Int
   restTimeInSeconds Int
   createdAt         DateTime   @default(now())
-  updateAt          DateTime   @updatedAt
+  updatedAt          DateTime   @updatedAt
 }
 
 model Session {
